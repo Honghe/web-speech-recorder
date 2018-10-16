@@ -16,4 +16,4 @@ def send_cs(path):
     return send_from_directory('cs', path)
 
 if __name__ == "__main__":
-    app.run(host='172.31.23.210', ssl_context='adhoc', debug=True)
+    app.run(host='0.0.0.0', ssl_context='adhoc', debug=True)
