@@ -1,9 +1,10 @@
+import audioop
 import time
+import wave
 
 from flask import Flask, request
 from flask import send_from_directory
 import os
-from werkzeug.utils import secure_filename
 from flask import jsonify
 import logging
 from datetime import datetime
@@ -23,8 +24,30 @@ def save_audio(f, filename):
         os.mkdir(bucket_path)
 
     f_path = os.path.join(bucket_path, filename)
-    f.save(f_path)
+    converted = convert_wav_rate(f)
+    # save
+    af = wave.open(f_path, 'w')
+    af.setnchannels(1)
+    af.setparams((1, 2, 16000, 0, 'NONE', 'Uncompressed'))
+    af.writeframes(converted)
+    af.close()
     return f_path
+
+
+def convert_wav_rate(f):
+    '''
+    convert wav rate to 16kHz
+    :param file-like object:
+    :return:
+    '''
+    audioFile = wave.open(f, 'r')
+    n_frames = audioFile.getnframes()
+    audioData = audioFile.readframes(n_frames)
+    originalRate = audioFile.getframerate()
+    # convert to mono channel and 16kHz, 16bit
+    converted = audioop.ratecv(audioData, 2, 1, originalRate, 16000, None)
+    audioFile.close()
+    return converted[0]
 
 
 @app.route("/")
