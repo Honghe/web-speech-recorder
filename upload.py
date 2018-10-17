@@ -6,6 +6,14 @@ from flask import jsonify
 
 app = Flask(__name__)
 
+def save_audio(f, filename):
+    upload_data = 'upload_data'
+    if not os.path.exists(upload_data):
+        os.mkdir(upload_data)
+
+    f_path = os.path.join(upload_data, filename)
+    f.save(f_path)
+    return f_path
 
 @app.route("/")
 def hello():
@@ -29,8 +37,7 @@ def upload_file():
     name = f.filename
     name_s = secure_filename(name)
     name_f = name_s + '.wav'
-    f_path = os.path.join('upload_data', name_f)
-    f.save(f_path)
+    f_path = save_audio(f, name_f)
 
     # return received summary
     rst_ar = []
