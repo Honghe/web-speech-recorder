@@ -117,8 +117,8 @@ function createDownloadLink2(filename, audio_container) {
         };
         var fd = new FormData();
         // add speaker before name
-        filename = speaker.value.trim() + "__" + filename;
-        fd.append("audio_data", blob, filename);
+        var filename_with_speaker = speaker.value.trim() + "__" + filename;
+        fd.append("audio_data", blob, filename_with_speaker);
         xhr.open("POST", "upload", true);
         xhr.send(fd);
     }
