@@ -1,10 +1,17 @@
+import time
+
 from flask import Flask, request
 from flask import send_from_directory
 import os
 from werkzeug.utils import secure_filename
 from flask import jsonify
+import logging
+from datetime import datetime
+
+logging.basicConfig(filename='http.log', level=logging.INFO)
 
 app = Flask(__name__)
+
 
 def save_audio(f, filename):
     # uploaded filename is formatted as <speaker name>__<record>.wav
@@ -18,6 +25,7 @@ def save_audio(f, filename):
     f_path = os.path.join(bucket_path, filename)
     f.save(f_path)
     return f_path
+
 
 @app.route("/")
 def hello():
@@ -39,8 +47,12 @@ def upload_file():
     # save file
     f = request.files['audio_data']
     name = f.filename
-    name_s = secure_filename(name)
-    name_f = name_s + '.wav'
+    t = time.time()
+    d = datetime.fromtimestamp(t).strftime('%Y-%m-%d %H:%M:%S')
+    logging.info("{} received file {}".format(d, f.filename))
+    # not use secure_filename, avoid filename changed
+    # name_s = secure_filename(name)
+    name_f = name + '.wav'
     f_path = save_audio(f, name_f)
 
     # return received summary
