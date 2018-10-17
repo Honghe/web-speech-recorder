@@ -8,10 +8,22 @@ var input; 							//MediaStreamAudioSourceNode we'll be recording
 // shim for AudioContext when it's not avb. 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext //audio context to help us record
+var speaker = document.getElementById("speaker");
 
+function check_speaker() {
+    if (speaker.value.trim().length <= 0) {
+        alert("Please set Speaker first.");
+        return false;
+    } else {
+        return true;
+    }
+}
 
 function startRecording2(recordButton, stopButton) {
     return function () {
+        if (check_speaker() == false) {
+            return;
+        }
         console.log(recordButton.id + " clicked");
 
         /*
@@ -62,7 +74,7 @@ function startRecording2(recordButton, stopButton) {
             //start the recording process
             rec.record()
 
-            console.log("Recording started");
+            console.log(recordButton.id + " started");
 
         }).catch(function (err) {
             //enable the record button if getUserMedia() fails
@@ -104,6 +116,8 @@ function createDownloadLink2(filename, audio_container) {
             }
         };
         var fd = new FormData();
+        // add speaker before name
+        filename = speaker.value.trim() + "__" + filename;
         fd.append("audio_data", blob, filename);
         xhr.open("POST", "upload", true);
         xhr.send(fd);
