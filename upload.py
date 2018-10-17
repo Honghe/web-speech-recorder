@@ -7,11 +7,15 @@ from flask import jsonify
 app = Flask(__name__)
 
 def save_audio(f, filename):
+    # uploaded filename is formatted as <speaker name>__<record>.wav
+    # so split to different bucket
+    bucket, filename = filename.split('__')
     upload_data = 'upload_data'
-    if not os.path.exists(upload_data):
-        os.mkdir(upload_data)
+    bucket_path = os.path.join(upload_data, bucket)
+    if not os.path.exists(bucket_path):
+        os.mkdir(bucket_path)
 
-    f_path = os.path.join(upload_data, filename)
+    f_path = os.path.join(bucket_path, filename)
     f.save(f_path)
     return f_path
 
