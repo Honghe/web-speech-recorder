@@ -92,6 +92,23 @@ function stopRecording2(recordButton, stopButton, filename, recordingsList) {
 }
 
 function createDownloadLink2(filename, audio_container) {
+    function uploadAudio(lastUploadTime, blob) {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function (e) {
+            if (this.readyState === 4) {
+                console.log("Server returned: ", e.target.responseText);
+                lastUploadTime.nodeValue = new Date().toTimeString();
+            } else {
+                console.log("upload error.");
+                lastUploadTime.nodeValue = "upload err."
+            }
+        };
+        var fd = new FormData();
+        fd.append("audio_data", blob, filename);
+        xhr.open("POST", "upload", true);
+        xhr.send(fd);
+    }
+
     return function (blob) {
         var url = URL.createObjectURL(blob);
         var au = document.createElement('audio');
@@ -130,21 +147,9 @@ function createDownloadLink2(filename, audio_container) {
         upload.href = "#";
         upload.innerHTML = "Upload";
         upload.addEventListener("click", function (event) {
-            var xhr = new XMLHttpRequest();
-            xhr.onload = function (e) {
-                if (this.readyState === 4) {
-                    console.log("Server returned: ", e.target.responseText);
-                    lastUploadTime.nodeValue = new Date().toTimeString();
-                } else {
-                    console.log("upload error.");
-                    lastUploadTime.nodeValue = "upload err."
-                }
-            };
-            var fd = new FormData();
-            fd.append("audio_data", blob, filename);
-            xhr.open("POST", "upload", true);
-            xhr.send(fd);
+            uploadAudio(lastUploadTime, blob);
         });
+
         li.appendChild(document.createTextNode(" "))//add a space in between
         li.appendChild(upload)//add the upload link to li
         li.appendChild(p)//add the upload link to li
@@ -155,6 +160,8 @@ function createDownloadLink2(filename, audio_container) {
         }
         //add the li element to the ol
         audio_container.appendChild(li);
+        // auto upload
+        uploadAudio(lastUploadTime, blob);
     }
 }
 
