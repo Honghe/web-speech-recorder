@@ -87,4 +87,4 @@ def upload_file():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', ssl_context='adhoc', debug=True)
+    app.run(host='0.0.0.0', ssl_context='adhoc', debug=False)
