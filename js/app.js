@@ -109,7 +109,7 @@ function createDownloadLink2(filename, audio_container) {
         xhr.onload = function (e) {
             if (this.readyState === 4) {
                 console.log("Server returned: ", e.target.responseText);
-                lastUploadTime.nodeValue = new Date().toTimeString();
+                lastUploadTime.nodeValue = new Date().toLocaleTimeString();
             } else {
                 console.log("upload error.");
                 lastUploadTime.nodeValue = "upload err."
@@ -144,18 +144,6 @@ function createDownloadLink2(filename, audio_container) {
 
         //add the new audio element to li
         li.appendChild(au);
-        // last update time text node
-        var p = document.createElement('p');
-        p.setAttribute("class", "p_nomargin");
-        var lastUploadTime = document.createTextNode(" ");
-        p.appendChild(document.createTextNode("LastUpload:"));
-        p.appendChild(document.createTextNode(" "))//add a space in between
-        p.appendChild(lastUploadTime);
-        //add the filename to the li
-        li.appendChild(document.createTextNode(filename + ".wav "))
-
-        //add the save to disk link to li
-        // li.appendChild(link);
 
         //upload link
         var upload = document.createElement('a');
@@ -165,8 +153,21 @@ function createDownloadLink2(filename, audio_container) {
             uploadAudio(lastUploadTime, blob);
         });
 
+        // last update time text node
+        var p = document.createElement('p');
+        p.setAttribute("class", "p_nomargin");
+        var lastUploadTime = document.createTextNode(" ");
+        p.appendChild(upload);
+        p.appendChild(document.createTextNode("LastUpload:"));
+        p.appendChild(document.createTextNode(" "))//add a space in between
+        p.appendChild(lastUploadTime);
+        //add the filename to the li
+        // li.appendChild(document.createTextNode(filename + ".wav "))
+
+        //add the save to disk link to li
+        // li.appendChild(link);
+
         li.appendChild(document.createTextNode(" "))//add a space in between
-        li.appendChild(upload)//add the upload link to li
         li.appendChild(p)//add the upload link to li
 
         // clear old child
